@@ -1,6 +1,9 @@
 package sub1;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
@@ -12,7 +15,7 @@ import java.util.HashMap;
  */
 public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 
-	private static final long serialVersionUID = 7837010474371220959L;
+//	private static final long serialVersionUID = 7837010474371220959L;
 	
 	private String name;
 	private String key;
@@ -20,45 +23,90 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	private Node predecessor;
 	private HashMap<String, Object> storage = new HashMap<>();
 	
-	private final static int N = 10;
+	private static final int N = 10;
+	public static final int DEFAULT_PORT = 1099;
 	
+	/**
+	 * Constructor to initiate a single node.
+	 * @param name
+	 * @throws RemoteException
+	 */
 	public NodeImpl(String name) throws RemoteException {
 		this.name = name;
 		key = Key.generate(name, N);
 		successor = this;
 		predecessor = this;
-//		System.out.println(name + ": My key is " + key);
+		Registry registry;
+		try {
+			registry = LocateRegistry.createRegistry(DEFAULT_PORT);
+//			System.out.println("Create Registry");
+		} catch (Exception e) {
+			registry = LocateRegistry.getRegistry(DEFAULT_PORT);
+//			System.out.println("Get registry.");
+		}
+		registry.rebind(name, this);
 	}
 	
+	/**
+	 * Constructor used to join another node (can be remote).
+	 * @param name
+	 * @param other
+	 * @throws RemoteException
+	 */
 	public NodeImpl(String name, Node other) throws RemoteException {
 		this(name);
 		join(other);
 	}
 	
-	private void join(Node other) throws RemoteException {
+	/**
+	 * Constructor used to join a Node on a remote network.
+	 * @param name
+	 * @param host
+	 * @param port
+	 * @param ohterName
+	 * @throws RemoteException
+	 * @throws NotBoundException 
+	 */
+	public NodeImpl(String name, String host, int port, String ohterName) throws RemoteException, NotBoundException {
+		this(name);
+		Registry registry = LocateRegistry.getRegistry(host, port);
+		Node other = (Node) registry.lookup(ohterName);
+		join(other);
+	}
+	
+	@Override
+	public void join(Node other) {
+		try {
 		boolean joined = false;
-		while(!joined) {
-			Node pred = other.getPredecessor();
-			String otherKey = other.getKey();
-			String predKey = pred.getKey();
-			
-			if(Key.between(key, predKey, otherKey)) {
-				pred.setSuccessor(this);
-				other.setPredecessor(this);
-				setSuccessor(other);
-				setPredecessor(pred);
-				joined = true;
-//				System.out.println(name + ": Joined in between " + pred + " and " + other);
-			} else
-				other = other.getSuccessor();
+			while(!joined) {
+				Node pred = other.getPredecessor();
+				String otherKey = other.getKey();
+				String predKey = pred.getKey();
+				
+				if(Key.between(key, predKey, otherKey)) {
+					pred.setSuccessor(this);
+					other.setPredecessor(this);
+					setSuccessor(other);
+					setPredecessor(pred);
+					joined = true;
+	//				System.out.println(name + ": Joined in between " + pred + " and " + other);
+				} else
+					other = other.getSuccessor();
+			}
+		} catch(RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 	
-	private void leave() throws RemoteException {
-		successor.setPredecessor(predecessor);
-		predecessor.setSuccessor(successor);
-		successor = this;
-		predecessor = this;
+	public void leave() {
+		try {
+			successor.setPredecessor(predecessor);
+			predecessor.setSuccessor(successor);
+			successor = this;
+			predecessor = this;
+		} catch(RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

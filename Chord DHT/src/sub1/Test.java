@@ -1,13 +1,15 @@
 package sub1;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class Test {
 	
-	public Test() throws RemoteException {
+	public Test() throws RemoteException, NotBoundException {
 		DHT dht = new NodeImpl("a");
-		new NodeImpl("b", (Node)dht);
+//		new NodeImpl("b", (Node)dht);
+		DHT dht2 = new NodeImpl("b", "localhost", 1099, "a");
 		System.out.println("Interface: ");
 		System.out.println("put key value");
 		System.out.println("get key");
@@ -51,6 +53,8 @@ public class Test {
 		try {
 			new Test();
 		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (NotBoundException e) {
 			e.printStackTrace();
 		}
 	}

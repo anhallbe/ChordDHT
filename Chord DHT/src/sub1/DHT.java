@@ -25,4 +25,15 @@ public interface DHT {
 	 * @param key
 	 */
 	public void remove(String key);
+	
+	/**
+	 * Leave the current network (if any) and join other.
+	 * @param other
+	 */
+	public void join(Node other);
+	
+	/**
+	 * Leave the current network.
+	 */
+	public void leave();
 }
