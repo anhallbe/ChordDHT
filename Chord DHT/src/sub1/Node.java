@@ -3,6 +3,11 @@ package sub1;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+/**
+ * Remote interface to let Nodes interact with each other.
+ * @author Andreas
+ *
+ */
 public interface Node extends Remote {
 	
 	public String getKey() throws RemoteException;

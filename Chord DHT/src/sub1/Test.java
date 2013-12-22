@@ -44,6 +44,7 @@ public class Test {
 			}
 			input = scan.nextLine();
 		}
+		scan.close();
 	}
 	
 	public static void main(String[] args) {

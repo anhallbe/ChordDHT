@@ -4,6 +4,12 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
+/**
+ * The implementation of a node/peer in the distributed hash table.
+ * Interfaces for usage and node-to-node communication are implemented.
+ * @author Andreas
+ *
+ */
 public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 
 	private static final long serialVersionUID = 7837010474371220959L;

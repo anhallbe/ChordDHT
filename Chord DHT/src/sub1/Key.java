@@ -3,6 +3,11 @@ package sub1;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Provides some static methods to generate/compare keys.
+ * @author Andreas
+ *
+ */
 public class Key {
 	
 	public static String generate(String name, int space) {
