@@ -8,8 +8,8 @@ public class Test {
 	
 	public Test() throws RemoteException, NotBoundException {
 		DHT dht = new NodeImpl("a");
-//		new NodeImpl("b", (Node)dht);
-		DHT dht2 = new NodeImpl("b", "localhost", 1099, "a");
+		new NodeImpl("b", (Node)dht);
+//		DHT dht = new NodeImpl("c", "192.168.2.2", 1099, "a");
 		System.out.println("Interface: ");
 		System.out.println("put key value");
 		System.out.println("get key");

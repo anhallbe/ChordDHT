@@ -7,7 +7,6 @@ public class Benchmark {
 		try {
 			long start, end;
 			DHT dht = new NodeImpl("table");
-			
 			System.out.println("Creating " + n + " nodes.");
 			start = System.currentTimeMillis();
 			for(int i=0; i<n; i++) {
@@ -23,6 +22,15 @@ public class Benchmark {
 			}
 			end = System.currentTimeMillis();
 			System.out.println("Time: " + (int)(end-start));
+			
+			System.out.println("Fetching " + n + " values.");
+			start = System.currentTimeMillis();
+			for(int i=0; i<n; i++) {
+				dht.get("key"+i);
+			}
+			end = System.currentTimeMillis();
+			System.out.println("Time: " + (int)(end-start));
+			
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();
