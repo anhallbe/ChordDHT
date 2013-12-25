@@ -3,14 +3,12 @@ package sub1;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.omg.PortableInterceptor.SUCCESSFUL;
-
 /**
  * Remote interface to let Nodes interact with each other.
  * @author Andreas
  *
  */
-public interface Node extends Remote {
+public interface Node<E> extends Remote {
 	
 	/**
 	 * Get the key associated with the Node.
@@ -24,28 +22,28 @@ public interface Node extends Remote {
 	 * @return The successor node.
 	 * @throws RemoteException
 	 */
-	public Node getSuccessor() throws RemoteException;
+	public Node<E> getSuccessor() throws RemoteException;
 	
 	/**
 	 * Get the predecessor of this node. If there are no other nodes, a node's predecessor will be the node itself.
 	 * @return The predecessor node.
 	 * @throws RemoteException
 	 */
-	public Node getPredecessor() throws RemoteException;
+	public Node<E> getPredecessor() throws RemoteException;
 	
 	/**
 	 * Set this node's successor to succ.
 	 * @param succ
 	 * @throws RemoteException
 	 */
-	public void setSuccessor(Node succ) throws RemoteException;
+	public void setSuccessor(Node<E> succ) throws RemoteException;
 	
 	/**
 	 * Set this node's predecessor to pred.
 	 * @param pred
 	 * @throws RemoteException
 	 */
-	public void setPredecessor(Node pred) throws RemoteException;
+	public void setPredecessor(Node<E> pred) throws RemoteException;
 	
 	/**
 	 * Send (or forward) a probe through the network. A probe will simply print its' name to the standard output and forward it to its' successor.
@@ -61,7 +59,7 @@ public interface Node extends Remote {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Node lookup(String key) throws RemoteException;
+	public Node<E> lookup(String key) throws RemoteException;
 	
 	/**
 	 * A network-level get.
@@ -69,7 +67,7 @@ public interface Node extends Remote {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Object getStored(String key) throws RemoteException;
+	public E getStored(String key) throws RemoteException;
 	
 	/**
 	 * A network-level put.
@@ -77,7 +75,7 @@ public interface Node extends Remote {
 	 * @param value
 	 * @throws RemoteException
 	 */
-	public void addStored(String key, Object value) throws RemoteException;
+	public void addStored(String key, E value) throws RemoteException;
 	
 	/**
 	 * A network-level remove.

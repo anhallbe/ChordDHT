@@ -7,8 +7,8 @@ import java.util.Scanner;
 public class Test {
 	
 	public Test() throws RemoteException, NotBoundException {
-		DHT dht = new NodeImpl("a");
-		new NodeImpl("b", (Node)dht);
+		DHT<String> dht = new NodeImpl<>("a");
+		new NodeImpl<String>("b", (Node<String>)dht);
 //		DHT dht = new NodeImpl("c", "192.168.2.2", 1099, "a");
 		System.out.println("Interface: ");
 		System.out.println("put key value");

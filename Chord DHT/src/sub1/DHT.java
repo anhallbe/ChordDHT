@@ -5,20 +5,20 @@ package sub1;
  * @author Andreas
  *
  */
-public interface DHT {
+public interface DHT<E> {
 	/**
 	 * Get an object that is mapped to the key.
 	 * @param key
 	 * @return
 	 */
-	public Object get(String key);
+	public E get(String key);
 	
 	/**
 	 * Put a new object in the DHT, the key can be any string.
 	 * @param key
 	 * @param object
 	 */
-	public void put(String key, Object object);
+	public void put(String key, E element);
 	
 	/**
 	 * Remove a key/object mapping if it exists.
@@ -30,7 +30,7 @@ public interface DHT {
 	 * Leave the current network (if any) and join other.
 	 * @param other
 	 */
-	public void join(Node other);
+	public void join(Node<E> other);
 	
 	/**
 	 * Leave the current network.

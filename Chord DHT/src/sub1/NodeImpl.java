@@ -11,17 +11,18 @@ import java.util.HashMap;
  * The implementation of a node/peer in the distributed hash table.
  * Interfaces for usage and node-to-node communication are implemented.
  * @author Andreas
+ * @param <E>
  *
  */
-public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
+public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> {
 
-//	private static final long serialVersionUID = 7837010474371220959L;
+	private static final long serialVersionUID = 7837010474371220959L;
 	
 	private String name;
 	private String key;
-	private Node successor;
-	private Node predecessor;
-	private HashMap<String, Object> storage = new HashMap<>();
+	private Node<E> successor;
+	private Node<E> predecessor;
+	private HashMap<String, E> storage = new HashMap<>();
 	
 	private static final int N = 10;
 	public static final int DEFAULT_PORT = 1099;
@@ -53,7 +54,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	 * @param other
 	 * @throws RemoteException
 	 */
-	public NodeImpl(String name, Node other) throws RemoteException {
+	public NodeImpl(String name, Node<E> other) throws RemoteException {
 		this(name);
 		join(other);
 	}
@@ -67,19 +68,20 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	 * @throws RemoteException
 	 * @throws NotBoundException 
 	 */
+	@SuppressWarnings("unchecked")
 	public NodeImpl(String name, String host, int port, String ohterName) throws RemoteException, NotBoundException {
 		this(name);
 		Registry registry = LocateRegistry.getRegistry(host, port);
-		Node other = (Node) registry.lookup(ohterName);
+		Node<E> other = (Node<E>) registry.lookup(ohterName);
 		join(other);
 	}
 	
 	@Override
-	public void join(Node other) {
+	public void join(Node<E> other) {
 		try {
 		boolean joined = false;
 			while(!joined) {
-				Node pred = other.getPredecessor();
+				Node<E> pred = other.getPredecessor();
 				String otherKey = other.getKey();
 				String predKey = pred.getKey();
 				
@@ -120,22 +122,22 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	}
 
 	@Override
-	public Node getSuccessor() throws RemoteException {
+	public Node<E> getSuccessor() throws RemoteException {
 		return successor;
 	}
 
 	@Override
-	public Node getPredecessor() throws RemoteException {
+	public Node<E> getPredecessor() throws RemoteException {
 		return predecessor;
 	}
 
 	@Override
-	public void setSuccessor(Node succ) throws RemoteException {
+	public void setSuccessor(Node<E> succ) throws RemoteException {
 		successor = succ;
 	}
 
 	@Override
-	public void setPredecessor(Node pred) throws RemoteException {
+	public void setPredecessor(Node<E> pred) throws RemoteException {
 		predecessor = pred;
 	}
 
@@ -150,7 +152,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	}
 
 	@Override
-	public Node lookup(String key) throws RemoteException {
+	public Node<E> lookup(String key) throws RemoteException {
 		String predKey = predecessor.getKey();
 		if(Key.between(key, predKey, this.key)) {
 			return this;
@@ -160,12 +162,12 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	}
 	
 	@Override
-	public Object getStored(String key) throws RemoteException {
+	public E getStored(String key) throws RemoteException {
 		return storage.get(key);
 	}
 	
 	@Override
-	public void addStored(String key, Object value) throws RemoteException {
+	public void addStored(String key, E value) throws RemoteException {
 		storage.put(key, value);
 	}
 	
@@ -175,10 +177,10 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	}
 
 	@Override
-	public Object get(String key) {
+	public E get(String key) {
 		try {
 			String k = Key.generate(key, N);
-			Node node = lookup(k);
+			Node<E> node = lookup(k);
 //			System.out.println(name + ": " + node + " have that.");
 			return node.getStored(k);
 		} catch (RemoteException e) {
@@ -188,10 +190,10 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	}
 
 	@Override
-	public void put(String key, Object object) {
+	public void put(String key, E object) {
 		try {
 			String k = Key.generate(key, N);
-			Node node = lookup(k);
+			Node<E> node = lookup(k);
 //			System.out.println(name + ": " + node + " wants that.");
 			node.addStored(k, object);
 		} catch (RemoteException e) {
@@ -203,7 +205,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node, DHT {
 	public void remove(String key) {
 		try {
 			String k = Key.generate(key, N);
-			Node node = lookup(k);
+			Node<E> node = lookup(k);
 //			System.out.println(name + ": " + node + " had that.");
 			node.removeStored(k);
 		} catch (RemoteException e) {
