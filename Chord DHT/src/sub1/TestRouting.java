@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 public class TestRouting {
 	
+	@SuppressWarnings("unchecked")
 	public TestRouting() throws RemoteException {
 		DHT<String> dht = new NodeImpl<>("n1");
 		new NodeImpl<String>("s2", (Node<String>) dht);

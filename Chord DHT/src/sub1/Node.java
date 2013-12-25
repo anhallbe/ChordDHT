@@ -10,7 +10,7 @@ import java.util.List;
  * @author Andreas
  *
  */
-public interface Node<E> extends Remote {
+public interface Node<V> extends Remote {
 	
 	/**
 	 * Get the key associated with the Node.
@@ -24,28 +24,28 @@ public interface Node<E> extends Remote {
 	 * @return The successor node.
 	 * @throws RemoteException
 	 */
-	public Node<E> getSuccessor() throws RemoteException;
+	public Node<V> getSuccessor() throws RemoteException;
 	
 	/**
 	 * Get the predecessor of this node. If there are no other nodes, a node's predecessor will be the node itself.
 	 * @return The predecessor node.
 	 * @throws RemoteException
 	 */
-	public Node<E> getPredecessor() throws RemoteException;
+	public Node<V> getPredecessor() throws RemoteException;
 	
 	/**
 	 * Set this node's successor to succ.
 	 * @param succ
 	 * @throws RemoteException
 	 */
-	public void setSuccessor(Node<E> succ) throws RemoteException;
+	public void setSuccessor(Node<V> succ) throws RemoteException;
 	
 	/**
 	 * Set this node's predecessor to pred.
 	 * @param pred
 	 * @throws RemoteException
 	 */
-	public void setPredecessor(Node<E> pred) throws RemoteException;
+	public void setPredecessor(Node<V> pred) throws RemoteException;
 	
 	/**
 	 * Send (or forward) a probe through the network. A probe will simply print its' name to the standard output and forward it to its' successor.
@@ -61,7 +61,7 @@ public interface Node<E> extends Remote {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Node<E> lookup(String key) throws RemoteException;
+	public Node<V> lookup(String key) throws RemoteException;
 	
 	/**
 	 * A network-level get.
@@ -69,7 +69,7 @@ public interface Node<E> extends Remote {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public E getStored(String key) throws RemoteException;
+	public V getStored(String key) throws RemoteException;
 	
 	/**
 	 * A network-level put.
@@ -77,7 +77,7 @@ public interface Node<E> extends Remote {
 	 * @param value
 	 * @throws RemoteException
 	 */
-	public void addStored(String key, E value) throws RemoteException;
+	public void addStored(String key, V value) throws RemoteException;
 	
 	/**
 	 * A network-level remove.
@@ -90,12 +90,12 @@ public interface Node<E> extends Remote {
 	 * @return all values contained in this node's storage.
 	 * @throws RemoteException
 	 */
-	public Collection<E> getValues() throws RemoteException;
+	public Collection<V> getValues() throws RemoteException;
 	
 	/**
 	 * Update the routing table of this node, given a list of all nodes in the network.
 	 * @param nodes
 	 * @throws RemoteException
 	 */
-	public void updateFingers(List<Node<E>> nodes) throws RemoteException;
+	public void updateFingers(List<Node<V>> nodes) throws RemoteException;
 }

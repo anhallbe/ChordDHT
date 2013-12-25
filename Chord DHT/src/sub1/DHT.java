@@ -7,20 +7,20 @@ import java.util.List;
  * @author Andreas
  *
  */
-public interface DHT<E> {
+public interface DHT<V> {
 	/**
 	 * Get an object that is mapped to the key.
 	 * @param key
 	 * @return
 	 */
-	public E get(String key);
+	public V get(String key);
 	
 	/**
 	 * Put a new object in the DHT, the key can be any string.
 	 * @param key
 	 * @param object
 	 */
-	public void put(String key, E element);
+	public void put(String key, V element);
 	
 	/**
 	 * Remove a key/object mapping if it exists.
@@ -32,7 +32,7 @@ public interface DHT<E> {
 	 * Leave the current network (if any) and join other.
 	 * @param other
 	 */
-	public void join(Node<E> other);
+	public void join(Node<V> other);
 	
 	/**
 	 * Leave the current network.

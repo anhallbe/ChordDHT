@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The implementation of a node/peer in the distributed hash table.
@@ -101,10 +100,10 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 					setSuccessor(other);
 					setPredecessor(pred);
 					joined = true;
-	//				System.out.println(name + ": Joined in between " + pred + " and " + other);
 				} else
 					other = other.getSuccessor();
 			}
+			updateRouting();
 		} catch(RemoteException e) {
 			e.printStackTrace();
 		}
@@ -116,6 +115,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 			predecessor.setSuccessor(successor);
 			successor = this;
 			predecessor = this;
+			updateRouting();
 		} catch(RemoteException e) {
 			e.printStackTrace();
 		}
@@ -163,39 +163,24 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 
 	@Override
 	public Node<E> lookup(String key) throws RemoteException {
-//		String predKey = predecessor.getKey();
-//		if(Key.between(key, predKey, this.key)) {
-//			return this;
-//		} else {
-//			return successor.lookup(key);
-//		}
-		
 		String predKey = predecessor.getKey();
-//		System.out.println(name + ": Lookup key=" + Integer.parseInt(key, 2)+ " predKey" + Integer.parseInt(predKey, 2)+ ", My key=" + Integer.parseInt(getKey(), 2));
 		if(Key.between(key, predKey, getKey()))
 			return this;
 		else if(fingers.keySet().size() < 3) {
-//			System.out.println(name + ": Routing table too small.. asking successor.");
 			return successor.lookup(key);
 		}
 		else {
 			String[] keys = {};
 			keys = fingers.keySet().toArray(keys);
-//			System.out.println(name + ": My routing table:");
-//			for(String s : keys)
-//				System.out.println(Integer.parseInt(s, 2) + " --------" + fingers.get(s));
 			for(int i=0; i<(keys.length-1); i++) {
 				String currentKey = keys[i];
 				String nextKey = keys[i+1];
 				if(Key.between(key, currentKey, nextKey)) {
 					Node<E> currentNode = fingers.get(currentKey);
 					Node<E> node = currentNode.getSuccessor();
-//					System.out.println(name + ": Routing lookup request to " + node + " (" + currentNode + "'s successor). key="+Integer.parseInt(key, 2) + ". currentKey="+Integer.parseInt(currentKey, 2) + ", nextKey=" +Integer.parseInt(nextKey, 2));
 					return node.lookup(key);
 				}
 			}
-//			Node<E> lastNode =
-//			System.out.println("Shiiiiiiet, didn't find anyone! Checking last element..");
 			return fingers.get(keys[keys.length-1]).getSuccessor().lookup(key);
 		}
 		
@@ -221,7 +206,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 		try {
 			String k = Key.generate(key, N);
 			Node<E> node = lookup(k);
-//			System.out.println(name + ": " + node + " have that.");
+			System.out.println("get " + node.getStored(k) + " from " + node);
 			return node.getStored(k);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -234,7 +219,6 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 		try {
 			String k = Key.generate(key, N);
 			Node<E> node = lookup(k);
-//			System.out.println(name + ": " + node + " wants that.");
 			node.addStored(k, object);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -246,7 +230,6 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 		try {
 			String k = Key.generate(key, N);
 			Node<E> node = lookup(k);
-//			System.out.println(name + ": " + node + " had that.");
 			node.removeStored(k);
 		} catch (RemoteException e) {
 			e.printStackTrace();
