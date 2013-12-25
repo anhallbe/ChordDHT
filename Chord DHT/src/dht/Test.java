@@ -1,4 +1,4 @@
-package sub1;
+package dht;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
