@@ -58,7 +58,7 @@ public interface Node<V> extends Remote {
 	/**
 	 * Search the network for a Node responsible for this key. Used in put/get/remove.
 	 * @param key
-	 * @return
+	 * @return a reference to the (remote) Node.
 	 * @throws RemoteException
 	 */
 	public Node<V> lookup(String key) throws RemoteException;
@@ -66,7 +66,7 @@ public interface Node<V> extends Remote {
 	/**
 	 * A network-level get.
 	 * @param key
-	 * @return
+	 * @return the item paired with the given key.
 	 * @throws RemoteException
 	 */
 	public V getStored(String key) throws RemoteException;

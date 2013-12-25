@@ -11,14 +11,14 @@ public interface DHT<V> {
 	/**
 	 * Get an object that is mapped to the key.
 	 * @param key
-	 * @return
+	 * @return the mapped object.
 	 */
 	public V get(String key);
 	
 	/**
 	 * Put a new object in the DHT, the key can be any string.
-	 * @param key
-	 * @param object
+	 * @param key - A unique key
+	 * @param element - The object to associate with the key.
 	 */
 	public void put(String key, V element);
 	
@@ -41,7 +41,7 @@ public interface DHT<V> {
 	
 	/**
 	 * List the String-representations of all values in the map.
-	 * @return
+	 * @return a list of human-readable strings..
 	 */
 	public List<String> listAll();
 	

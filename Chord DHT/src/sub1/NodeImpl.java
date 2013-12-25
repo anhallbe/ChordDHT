@@ -259,7 +259,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 
 	/**
 	 * Get a list of all nodes in the network (Warning: May take some time, and consume a lot of resources!).
-	 * @return
+	 * @return a list of all nodes.
 	 */
 	private List<Node<E>> allNodes() {
 		ArrayList<Node<E>> nodes = new ArrayList<>();
