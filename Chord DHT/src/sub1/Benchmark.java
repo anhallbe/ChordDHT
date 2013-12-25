@@ -16,6 +16,12 @@ public class Benchmark {
 			end = System.currentTimeMillis();
 			System.out.println("Time: " + (int)(end-start));
 			
+			System.out.println("Updating routing tables...");
+			start = System.currentTimeMillis();
+			dht.updateRouting();
+			end = System.currentTimeMillis();
+			System.out.println("Time: " + (int)(end-start));
+			
 			System.out.println("Adding " + n + " values.");
 			start = System.currentTimeMillis();
 			for(int i=0; i<n; i++) {
@@ -35,8 +41,9 @@ public class Benchmark {
 			
 			System.out.println("Listing " + n + " values.");
 			start = System.currentTimeMillis();
-			for(String s : dht.listAll())
-				System.out.println(s);
+//			for(String s : dht.listAll())
+//				System.out.print(s);
+			dht.listAll();
 			end = System.currentTimeMillis();
 			System.out.println("Time: " + (int)(end-start));
 			

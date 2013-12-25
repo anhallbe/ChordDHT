@@ -10,6 +10,22 @@ public class Test {
 	public Test() throws RemoteException, NotBoundException {
 		DHT<String> dht = new NodeImpl<>("a");
 		new NodeImpl<String>("b", (Node<String>)dht);
+		new NodeImpl<String>("c", (Node<String>)dht);
+		new NodeImpl<String>("d", (Node<String>)dht);
+		new NodeImpl<String>("e", (Node<String>)dht);
+		new NodeImpl<String>("f", (Node<String>)dht);
+		new NodeImpl<String>("g", (Node<String>)dht);
+		new NodeImpl<String>("h", (Node<String>)dht);
+		new NodeImpl<String>("i", (Node<String>)dht);
+		new NodeImpl<String>("j", (Node<String>)dht);
+		new NodeImpl<String>("k", (Node<String>)dht);
+		new NodeImpl<String>("l", (Node<String>)dht);
+		new NodeImpl<String>("m", (Node<String>)dht);
+		new NodeImpl<String>("n", (Node<String>)dht);
+		new NodeImpl<String>("o", (Node<String>)dht);
+		new NodeImpl<String>("p", (Node<String>)dht);
+		dht.updateRouting();
+		
 //		DHT dht = new NodeImpl("c", "192.168.2.2", 1099, "a");
 		System.out.println("Interface: ");
 		System.out.println("put key value");

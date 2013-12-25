@@ -12,7 +12,8 @@ public class Key {
 	
 	public static String generate(String name, int space) {
 		String sha1 = sha1(name);
-		return sha1.substring(0, space);
+		int characters = (int) (Math.log(space)/Math.log(2));
+		return sha1.substring(0, characters);
 	}
 	
 	public static boolean between(String k, String f, String t) {

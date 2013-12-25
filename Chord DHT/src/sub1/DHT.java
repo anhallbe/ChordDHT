@@ -44,4 +44,6 @@ public interface DHT<E> {
 	 * @return
 	 */
 	public List<String> listAll();
+	
+	public void updateRouting();
 }

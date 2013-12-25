@@ -7,14 +7,19 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The implementation of a node/peer in the distributed hash table.
  * Interfaces for usage and node-to-node communication are implemented.
  * @author Andreas
- * @param <E>
+ * @param <E> is the type of value that is stored in the table.
  *
  */
 public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> {
@@ -26,8 +31,9 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	private Node<E> successor;
 	private Node<E> predecessor;
 	private HashMap<String, E> storage = new HashMap<>();
+	private Map<String, Node<E>> fingers = new LinkedHashMap<>();
 	
-	private static final int N = 10;
+	private static final int N = 1048576;
 	public static final int DEFAULT_PORT = 1099;
 	
 	/**
@@ -38,6 +44,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	public NodeImpl(String name) throws RemoteException {
 		this.name = name;
 		key = Key.generate(name, N);
+		//System.out.println("Generated key (N=" + N + ": " + key);
 		successor = this;
 		predecessor = this;
 		Registry registry;
@@ -156,12 +163,42 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 
 	@Override
 	public Node<E> lookup(String key) throws RemoteException {
+//		String predKey = predecessor.getKey();
+//		if(Key.between(key, predKey, this.key)) {
+//			return this;
+//		} else {
+//			return successor.lookup(key);
+//		}
+		
 		String predKey = predecessor.getKey();
-		if(Key.between(key, predKey, this.key)) {
+//		System.out.println(name + ": Lookup key=" + Integer.parseInt(key, 2)+ " predKey" + Integer.parseInt(predKey, 2)+ ", My key=" + Integer.parseInt(getKey(), 2));
+		if(Key.between(key, predKey, getKey()))
 			return this;
-		} else {
+		else if(fingers.keySet().size() < 3) {
+//			System.out.println(name + ": Routing table too small.. asking successor.");
 			return successor.lookup(key);
 		}
+		else {
+			String[] keys = {};
+			keys = fingers.keySet().toArray(keys);
+//			System.out.println(name + ": My routing table:");
+//			for(String s : keys)
+//				System.out.println(Integer.parseInt(s, 2) + " --------" + fingers.get(s));
+			for(int i=0; i<(keys.length-1); i++) {
+				String currentKey = keys[i];
+				String nextKey = keys[i+1];
+				if(Key.between(key, currentKey, nextKey)) {
+					Node<E> currentNode = fingers.get(currentKey);
+					Node<E> node = currentNode.getSuccessor();
+//					System.out.println(name + ": Routing lookup request to " + node + " (" + currentNode + "'s successor). key="+Integer.parseInt(key, 2) + ". currentKey="+Integer.parseInt(currentKey, 2) + ", nextKey=" +Integer.parseInt(nextKey, 2));
+					return node.lookup(key);
+				}
+			}
+//			Node<E> lastNode =
+//			System.out.println("Shiiiiiiet, didn't find anyone! Checking last element..");
+			return fingers.get(keys[keys.length-1]).getSuccessor().lookup(key);
+		}
+		
 	}
 	
 	@Override
@@ -237,4 +274,82 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 		return storage.values();
 	}
 
+	/**
+	 * Get a list of all nodes in the network (Warning: May take some time, and consume a lot of resources!).
+	 * @return
+	 */
+	private List<Node<E>> allNodes() {
+		ArrayList<Node<E>> nodes = new ArrayList<>();
+		try {
+			Node<E> current = this;
+			do {
+				nodes.add(current);
+				current = current.getSuccessor();
+			} while(current != this);
+		} catch(RemoteException e){
+			System.err.println("Error finding all nodes!");
+		}
+		Collections.sort(nodes, new Comparator<Node<E>>() {
+			@Override
+			public int compare(Node<E> n1, Node<E> n2) {
+				try {
+					String key1 = n1.getKey();
+					String key2 = n2.getKey();
+					int i1 = Integer.parseInt(key1, 2);
+					int i2 = Integer.parseInt(key2, 2);
+					
+					if(i1 > i2)
+						return 1;
+					if(i1 < i2)
+						return -1;
+					else
+						return 0;
+				}catch(RemoteException e) {
+					return 0;
+				}
+			}
+		});
+		return nodes;
+	}
+	
+	public void updateFingers(List<Node<E>> nodes) {
+		Map<String, Node<E>> fingers = new LinkedHashMap<>();
+		fingers.put(key, this);
+		try {
+			int myIndex = nodes.indexOf(this);
+			
+			for(int i=1; i<nodes.size(); i = i*2) {
+				int nodeIndex = (myIndex + i) % nodes.size();
+				Node<E> n = nodes.get(nodeIndex);
+				fingers.put(n.getKey(), n);
+			}
+		} catch(RemoteException e) {
+			e.printStackTrace();
+		}
+		this.fingers = fingers;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(other instanceof NodeImpl<?>)
+			try {
+				return key.equals(((NodeImpl<?>) other).getKey());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				return false;
+			}
+		else
+			return false;
+	}
+
+	@Override
+	public void updateRouting() {
+		try {
+			List<Node<E>> nodes = allNodes();
+			for(Node<E> n : nodes)
+				n.updateFingers(nodes);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
 }

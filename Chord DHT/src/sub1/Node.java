@@ -3,6 +3,7 @@ package sub1;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Remote interface to let Nodes interact with each other.
@@ -90,4 +91,11 @@ public interface Node<E> extends Remote {
 	 * @throws RemoteException
 	 */
 	public Collection<E> getValues() throws RemoteException;
+	
+	/**
+	 * Update the routing table of this node, given a list of all nodes in the network.
+	 * @param nodes
+	 * @throws RemoteException
+	 */
+	public void updateFingers(List<Node<E>> nodes) throws RemoteException;
 }
