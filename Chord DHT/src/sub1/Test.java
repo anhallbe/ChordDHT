@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class Test {
 	
+	@SuppressWarnings("unchecked")
 	public Test() throws RemoteException, NotBoundException {
 		DHT<String> dht = new NodeImpl<>("a");
 		new NodeImpl<String>("b", (Node<String>)dht);
@@ -15,6 +16,7 @@ public class Test {
 		System.out.println("get key");
 		System.out.println("remove key");
 		System.out.println("bench n");
+		System.out.println("list");
 		Scanner scan = new Scanner(System.in);
 		String input = scan.nextLine();
 		while(!input.equals("exit")) {
@@ -37,12 +39,18 @@ public class Test {
 			case "bench":
 				Benchmark.bench(Integer.parseInt(inputs[1]));
 				break;
+			case "list":
+				System.out.println("Items:");
+				for(String s : dht.listAll())
+					System.out.println(s);
+				break;
 			default:
 				System.out.println("Usage:");
 				System.out.println("put key value");
 				System.out.println("get key");
 				System.out.println("remove key");
 				System.out.println("bench");
+				System.out.println("list");
 			}
 			input = scan.nextLine();
 		}

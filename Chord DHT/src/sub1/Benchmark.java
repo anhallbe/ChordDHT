@@ -3,14 +3,15 @@ package sub1;
 import java.rmi.RemoteException;
 
 public class Benchmark {
+	@SuppressWarnings("unchecked")
 	public static void bench(int n) {
 		try {
 			long start, end;
-			DHT dht = new NodeImpl("table");
+			DHT<String> dht = new NodeImpl<>("table");
 			System.out.println("Creating " + n + " nodes.");
 			start = System.currentTimeMillis();
 			for(int i=0; i<n; i++) {
-				new NodeImpl("table"+i, (Node) dht);
+				new NodeImpl<>("table"+i, (Node<String>) dht);
 			}
 			end = System.currentTimeMillis();
 			System.out.println("Time: " + (int)(end-start));
@@ -31,6 +32,13 @@ public class Benchmark {
 			end = System.currentTimeMillis();
 			System.out.println("Time: " + (int)(end-start));
 			
+			
+			System.out.println("Listing " + n + " values.");
+			start = System.currentTimeMillis();
+			for(String s : dht.listAll())
+				System.out.println(s);
+			end = System.currentTimeMillis();
+			System.out.println("Time: " + (int)(end-start));
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();

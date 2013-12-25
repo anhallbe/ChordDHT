@@ -1,5 +1,7 @@
 package sub1;
 
+import java.util.List;
+
 /**
  * A simple interface used for HashTable-like storage.
  * @author Andreas
@@ -36,4 +38,10 @@ public interface DHT<E> {
 	 * Leave the current network.
 	 */
 	public void leave();
+	
+	/**
+	 * List the String-representations of all values in the map.
+	 * @return
+	 */
+	public List<String> listAll();
 }

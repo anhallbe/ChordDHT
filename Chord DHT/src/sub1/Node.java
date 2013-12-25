@@ -2,6 +2,7 @@ package sub1;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Collection;
 
 /**
  * Remote interface to let Nodes interact with each other.
@@ -83,4 +84,10 @@ public interface Node<E> extends Remote {
 	 * @throws RemoteException
 	 */
 	public void removeStored(String key) throws RemoteException;
+	
+	/**
+	 * @return all values contained in this node's storage.
+	 * @throws RemoteException
+	 */
+	public Collection<E> getValues() throws RemoteException;
 }

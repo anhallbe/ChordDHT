@@ -5,7 +5,10 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * The implementation of a node/peer in the distributed hash table.
@@ -211,6 +214,27 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public List<String> listAll() {
+		Node<E> currentNode = this;
+		ArrayList<String> all = new ArrayList<>();
+		try {
+			do {
+				for(E element : currentNode.getValues())
+					all.add(element.toString());
+				currentNode = currentNode.getSuccessor();
+			} while(currentNode != this);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return all;
+	}
+
+	@Override
+	public Collection<E> getValues() throws RemoteException {
+		return storage.values();
 	}
 
 }
