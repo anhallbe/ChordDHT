@@ -99,6 +99,14 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 					other.setPredecessor(this);
 					setSuccessor(other);
 					setPredecessor(pred);
+					
+					/*Get a share of the storage from our new successor*/
+					System.out.println(name + ": Asking successor to handover");
+					Map<String, E> handover = successor.handover(predKey, key);
+					for(String k : handover.keySet())
+						storage.put(k, handover.get(k));
+					System.out.println(name + ": Done with handover.");
+					
 					joined = true;
 				} else
 					other = other.getSuccessor();
@@ -111,6 +119,12 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	
 	public void leave() {
 		try {
+			/*Hand over items to successor.*/
+			System.out.println(name + ": I'm leaving. " + successor + " will handle my storage. (" + storage.size() + ") items.");
+			for(String k : storage.keySet())
+				successor.addStored(k, storage.get(k));
+			System.out.println(name + ": Done.");
+			
 			successor.setPredecessor(predecessor);
 			predecessor.setSuccessor(successor);
 			successor = this;
@@ -119,6 +133,18 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 		} catch(RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public Map<String, E> handover(String oldPredKey, String newPredKey) throws RemoteException {
+		System.out.println(name + ": Handing over values to new predecessor.");
+		Map<String, E> handover = new LinkedHashMap<>();
+		List<String> keys = new ArrayList<String>(storage.keySet());
+		for(String k : keys)
+			if(Key.between(k, oldPredKey, newPredKey))
+				handover.put(k, storage.remove(k));
+		System.out.println(name + ": Handing over " + handover.size() + " keys/values.");
+		return handover;
 	}
 	
 	@Override

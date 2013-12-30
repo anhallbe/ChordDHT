@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Remote interface to let Nodes interact with each other.
@@ -85,6 +86,14 @@ public interface Node<V> extends Remote {
 	 * @throws RemoteException
 	 */
 	public void removeStored(String key) throws RemoteException;
+	
+	/**
+	 * Ask this node to hand over a part of its' storage to its' new predecessor.
+	 * @param key
+	 * @return
+	 * @throws RemoteException
+	 */
+	public Map<String, V> handover(String oldPredKey, String newPredKey) throws RemoteException;
 	
 	/**
 	 * @return all values contained in this node's storage.

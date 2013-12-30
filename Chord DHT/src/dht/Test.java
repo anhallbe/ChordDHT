@@ -9,6 +9,10 @@ public class Test {
 	@SuppressWarnings("unchecked")
 	public Test() throws RemoteException, NotBoundException {
 		DHT<String> dht = new NodeImpl<>("a");
+		dht.put("asd", "asd");
+		dht.put("asd1", "asd");
+		dht.put("asd2", "asd");
+		dht.put("asd3", "asd");
 		new NodeImpl<String>("b", (Node<String>)dht);
 		new NodeImpl<String>("c", (Node<String>)dht);
 		new NodeImpl<String>("d", (Node<String>)dht);
