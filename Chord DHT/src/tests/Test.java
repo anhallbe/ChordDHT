@@ -1,8 +1,12 @@
-package dht;
+package tests;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
+
+import dht.DHT;
+import dht.Node;
+import dht.NodeImpl;
 
 public class Test {
 	
@@ -57,7 +61,7 @@ public class Test {
 				System.out.println("Removed " + key);
 				break;
 			case "bench":
-				Benchmark.bench(Integer.parseInt(inputs[1]));
+				Benchmark.benchConcurrency(Integer.parseInt(inputs[1]));
 				break;
 			case "list":
 				System.out.println("Items:");

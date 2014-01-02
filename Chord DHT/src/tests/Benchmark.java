@@ -1,18 +1,20 @@
-package dht;
+package tests;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import dht.DHT;
+import dht.Node;
+import dht.NodeImpl;
+
 public class Benchmark {
 	@SuppressWarnings("unchecked")
-	public static void bench(int n) {
+	public static void benchConcurrency(int n) {
 		try {
 			long start, end;
 			DHT<String> dht = new NodeImpl<>("table");
@@ -97,4 +99,42 @@ public class Benchmark {
 		
 		while(finnishedWork.get() != workStarted);
 	}
+
+	@SuppressWarnings("unchecked")
+	public static void bench(int nodes, int n) {
+		try {
+			long start, end;
+			String[] keys = new String[n];
+			for(int i=0; i<n; i++)
+				keys[i] = "key" + i;
+			
+			System.out.println("Starting test with " + nodes + " nodes and " + n + " operations.");
+			
+			start = System.currentTimeMillis();
+			DHT<String> dht = new NodeImpl<>("dht");
+			for(int i=0; i<nodes; i++)
+				new NodeImpl<>("dht"+i, (Node<String>)dht);
+			end = System.currentTimeMillis();
+			System.out.println("Create time: " + (int)(end-start));
+			
+			
+			start = System.currentTimeMillis();
+			for (String key : keys)
+				dht.put(key, "value");
+			end = System.currentTimeMillis();
+			System.out.println("Put time: " + (int)(end-start));
+			
+			
+			start = System.currentTimeMillis();
+			for (String key : keys)
+				dht.get(key);
+			end = System.currentTimeMillis();
+			System.out.println("Get time: " + (int)(end-start));
+			
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

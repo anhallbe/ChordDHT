@@ -1,6 +1,10 @@
-package dht;
+package tests;
 
 import java.rmi.RemoteException;
+
+import dht.DHT;
+import dht.Node;
+import dht.NodeImpl;
 
 public class TestRouting {
 	

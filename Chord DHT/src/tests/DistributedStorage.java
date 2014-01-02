@@ -1,16 +1,25 @@
-package dht;
+package tests;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
+import dht.DHT;
+import dht.Node;
+import dht.NodeImpl;
+
 public class DistributedStorage {
 	
 	private DHT<String> dht;
 	
+	@SuppressWarnings("unchecked")
 	public DistributedStorage(String name) {
 		try {
 			dht = new NodeImpl<>(name);
+			new NodeImpl<>("a", (Node<String>)dht);
+			new NodeImpl<>("b", (Node<String>)dht);
+			new NodeImpl<>("c", (Node<String>)dht);
+			new NodeImpl<>("d", (Node<String>)dht);
 			userInterface();
 		} catch (RemoteException e) {
 			System.err.println("Shit's not working, yo. (RemoteException)");
@@ -53,7 +62,10 @@ public class DistributedStorage {
 					System.out.println("Removed " + key);
 					break;
 				case "bench":
-					Benchmark.bench(Integer.parseInt(inputs[1]));
+					Benchmark.bench(Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]));
+					break;
+				case "benchc":
+					Benchmark.benchConcurrency(Integer.parseInt(inputs[1]));
 					break;
 				case "list":
 					System.out.println("Items:");
@@ -65,7 +77,8 @@ public class DistributedStorage {
 					System.out.println("put key value");
 					System.out.println("get key");
 					System.out.println("remove key");
-					System.out.println("bench");
+					System.out.println("bench nodes values");
+					System.out.println("benchc nodes");
 					System.out.println("list");
 					System.out.println("exit");
 				}
