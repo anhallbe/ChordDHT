@@ -13,7 +13,10 @@ public class Key {
 	public static String generate(String name, int space) {
 		String sha1 = sha1(name);
 		int characters = (int) (Math.log(space)/Math.log(2));
-		return sha1.substring(0, characters);
+		characters = Math.min(characters, sha1.length());
+//		System.out.println("sha1.length() = " + sha1.length() + ", sha1=" + sha1 + " characters=" + characters);
+		return sha1.substring(sha1.length()-characters-1, sha1.length());
+//		return sha1.substring(0, characters);
 	}
 	
 	public static boolean between(String k, String f, String t) {

@@ -13,8 +13,8 @@ public class DistributedStorage {
 			dht = new NodeImpl<>(name);
 			userInterface();
 		} catch (RemoteException e) {
-			System.err.println("Shit's not working, yo.");
-			e.printStackTrace();
+			System.err.println("Shit's not working, yo. (RemoteException)");
+//			e.printStackTrace();
 		}
 	}
 	
@@ -23,9 +23,11 @@ public class DistributedStorage {
 			dht = new NodeImpl<>(name, host, port, rName);
 			userInterface();
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			System.err.println("RemoteException");
+//			e.printStackTrace();
 		} catch (NotBoundException e) {
-			e.printStackTrace();
+			System.err.println("RMI Registry error.");
+//			e.printStackTrace();
 		}
 	}
 	

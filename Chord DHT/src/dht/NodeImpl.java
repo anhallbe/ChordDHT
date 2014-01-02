@@ -6,7 +6,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	private HashMap<String, E> storage = new HashMap<>();
 	private Map<String, Node<E>> fingers = new LinkedHashMap<>();
 	
-	private static final int N = 1048576;
+	private static final int N = 256;
 	public static final int DEFAULT_PORT = 1099;
 	
 	/**
@@ -43,7 +42,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	public NodeImpl(String name) throws RemoteException {
 		this.name = name;
 		key = Key.generate(name, N);
-		//System.out.println("Generated key (N=" + N + ": " + key);
+		System.out.println(name + ": My key is " + key);
 		successor = this;
 		predecessor = this;
 		Registry registry;
@@ -111,8 +110,11 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 				} else
 					other = other.getSuccessor();
 			}
+//			System.out.println("Updating routing table...");
 			updateRouting();
+//			System.out.println("Done!");
 		} catch(RemoteException e) {
+			System.err.println("Error joining " + other);
 			e.printStackTrace();
 		}
 	}
@@ -131,6 +133,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 			predecessor = this;
 			updateRouting();
 		} catch(RemoteException e) {
+			System.err.println("Error leaving.");
 			e.printStackTrace();
 		}
 	}
@@ -219,6 +222,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	
 	@Override
 	public void addStored(String key, E value) throws RemoteException {
+		System.out.println(name + ": Adding <" + key +", " + value + "> to my storage.");
 		storage.put(key, value);
 	}
 	
@@ -271,7 +275,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 				for(E element : currentNode.getValues())
 					all.add(element.toString());
 				currentNode = currentNode.getSuccessor();
-			} while(currentNode != this);
+			} while(!this.equals(currentNode));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -279,8 +283,10 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 
 	@Override
-	public Collection<E> getValues() throws RemoteException {
-		return storage.values();
+	public List<E> getValues() throws RemoteException {
+//		return storage.values();
+		ArrayList<E> values = new ArrayList<>(storage.values());
+		return values;
 	}
 
 	/**
@@ -293,8 +299,9 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 			Node<E> current = this;
 			do {
 				nodes.add(current);
+//				System.out.println(name + ": node=" + current.toString());
 				current = current.getSuccessor();
-			} while(current != this);
+			} while(!this.equals(current));
 		} catch(RemoteException e){
 			System.err.println("Error finding all nodes!");
 		}
@@ -340,9 +347,18 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	
 	@Override
 	public boolean equals(Object other) {
-		if(other instanceof NodeImpl<?>)
+//		if(other instanceof NodeImpl<?>)
+//			try {
+//				return key.equals(((NodeImpl<?>) other).getKey());
+//			} catch (RemoteException e) {
+//				e.printStackTrace();
+//				return false;
+//			}
+//		else
+//			return false;
+		if(other instanceof Node<?>)
 			try {
-				return key.equals(((NodeImpl<?>) other).getKey());
+				return key.equals(((Node<?>) other).getKey());
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				return false;
@@ -355,6 +371,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	public void updateRouting() {
 		try {
 			List<Node<E>> nodes = allNodes();
+//			System.out.println("Updating fingers on " + nodes.size() + " nodes.");
 			for(Node<E> n : nodes)
 				n.updateFingers(nodes);
 		} catch (RemoteException e) {

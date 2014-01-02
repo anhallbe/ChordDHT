@@ -2,7 +2,6 @@ package dht;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -99,7 +98,8 @@ public interface Node<V> extends Remote {
 	 * @return all values contained in this node's storage.
 	 * @throws RemoteException
 	 */
-	public Collection<V> getValues() throws RemoteException;
+//	public Collection<V> getValues() throws RemoteException;
+	public List<V> getValues() throws RemoteException;
 	
 	/**
 	 * Update the routing table of this node, given a list of all nodes in the network.
