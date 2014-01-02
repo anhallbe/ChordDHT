@@ -139,7 +139,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 
 	@Override
-	public synchronized Map<String, E> handover(String oldPredKey, String newPredKey) throws RemoteException {
+	public Map<String, E> handover(String oldPredKey, String newPredKey) throws RemoteException {
 //		System.out.println(name + ": Handing over values to new predecessor.");
 		Map<String, E> handover = new LinkedHashMap<>();
 		List<String> keys = new ArrayList<String>(storage.keySet());
@@ -161,22 +161,22 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 
 	@Override
-	public synchronized Node<E> getSuccessor() throws RemoteException {
+	public Node<E> getSuccessor() throws RemoteException {
 		return successor;
 	}
 
 	@Override
-	public synchronized Node<E> getPredecessor() throws RemoteException {
+	public Node<E> getPredecessor() throws RemoteException {
 		return predecessor;
 	}
 
 	@Override
-	public synchronized void setSuccessor(Node<E> succ) throws RemoteException {
+	public void setSuccessor(Node<E> succ) throws RemoteException {
 		successor = succ;
 	}
 
 	@Override
-	public synchronized void setPredecessor(Node<E> pred) throws RemoteException {
+	public void setPredecessor(Node<E> pred) throws RemoteException {
 		predecessor = pred;
 	}
 
@@ -191,7 +191,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 
 	@Override
-	public synchronized Node<E> lookup(String key) throws RemoteException {
+	public Node<E> lookup(String key) throws RemoteException {
 		String predKey = predecessor.getKey();
 		if(Key.between(key, predKey, getKey()))
 			return this;
@@ -216,18 +216,18 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 	
 	@Override
-	public synchronized E getStored(String key) throws RemoteException {
+	public E getStored(String key) throws RemoteException {
 		return storage.get(key);
 	}
 	
 	@Override
-	public synchronized void addStored(String key, E value) throws RemoteException {
+	public void addStored(String key, E value) throws RemoteException {
 //		System.out.println(name + ": Adding <" + key +", " + value + "> to my storage.");
 		storage.put(key, value);
 	}
 	
 	@Override
-	public synchronized void removeStored(String key) throws RemoteException {
+	public void removeStored(String key) throws RemoteException {
 		storage.remove(key);
 	}
 

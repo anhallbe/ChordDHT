@@ -35,38 +35,42 @@ public class DistributedStorage {
 		Scanner scan = new Scanner(System.in);
 		String input = scan.nextLine();
 		while(!input.equals("exit")) {
-			String[] inputs = input.split(" ");
-			switch(inputs[0]) {
-			case "put":
-				String key = inputs[1];
-				String value = inputs[2];
-				dht.put(key, value);
-				break;
-			case "get":
-				key = inputs[1];
-				System.out.println("Got from dht: " + dht.get(key));
-				break;
-			case "remove":
-				key = inputs[1];
-				dht.remove(key);
-				System.out.println("Removed " + key);
-				break;
-			case "bench":
-				Benchmark.bench(Integer.parseInt(inputs[1]));
-				break;
-			case "list":
-				System.out.println("Items:");
-				for(String s : dht.listAll())
-					System.out.println(s);
-				break;
-			default:
-				System.out.println("Usage:");
-				System.out.println("put key value");
-				System.out.println("get key");
-				System.out.println("remove key");
-				System.out.println("bench");
-				System.out.println("list");
-				System.out.println("exit");
+			try {
+				String[] inputs = input.split(" ");
+				switch(inputs[0]) {
+				case "put":
+					String key = inputs[1];
+					String value = inputs[2];
+					dht.put(key, value);
+					break;
+				case "get":
+					key = inputs[1];
+					System.out.println("Got from dht: " + dht.get(key));
+					break;
+				case "remove":
+					key = inputs[1];
+					dht.remove(key);
+					System.out.println("Removed " + key);
+					break;
+				case "bench":
+					Benchmark.bench(Integer.parseInt(inputs[1]));
+					break;
+				case "list":
+					System.out.println("Items:");
+					for(String s : dht.listAll())
+						System.out.println(s);
+					break;
+				default:
+					System.out.println("Usage:");
+					System.out.println("put key value");
+					System.out.println("get key");
+					System.out.println("remove key");
+					System.out.println("bench");
+					System.out.println("list");
+					System.out.println("exit");
+				}
+			} catch (Exception e) {
+				System.out.println("Something went wrong.. a bad input?");
 			}
 			input = scan.nextLine();
 		}
