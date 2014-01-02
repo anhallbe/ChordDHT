@@ -31,7 +31,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	private HashMap<String, E> storage = new HashMap<>();
 	private Map<String, Node<E>> fingers = new LinkedHashMap<>();
 	
-	private static final int N = 256;
+	private static final int N = 1048576;
 	public static final int DEFAULT_PORT = 1099;
 	
 	/**
@@ -42,7 +42,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	public NodeImpl(String name) throws RemoteException {
 		this.name = name;
 		key = Key.generate(name, N);
-		System.out.println(name + ": My key is " + key);
+//		System.out.println(name + ": My key is " + key);
 		successor = this;
 		predecessor = this;
 		Registry registry;
@@ -100,11 +100,11 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 					setPredecessor(pred);
 					
 					/*Get a share of the storage from our new successor*/
-					System.out.println(name + ": Asking successor to handover");
+//					System.out.println(name + ": Asking successor to handover");
 					Map<String, E> handover = successor.handover(predKey, key);
 					for(String k : handover.keySet())
 						storage.put(k, handover.get(k));
-					System.out.println(name + ": Done with handover.");
+//					System.out.println(name + ": Done with handover.");
 					
 					joined = true;
 				} else
@@ -122,7 +122,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	public void leave() {
 		try {
 			/*Hand over items to successor.*/
-			System.out.println(name + ": I'm leaving. " + successor + " will handle my storage. (" + storage.size() + ") items.");
+//			System.out.println(name + ": I'm leaving. " + successor + " will handle my storage. (" + storage.size() + ") items.");
 			for(String k : storage.keySet())
 				successor.addStored(k, storage.get(k));
 			System.out.println(name + ": Done.");
@@ -139,14 +139,14 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 
 	@Override
-	public Map<String, E> handover(String oldPredKey, String newPredKey) throws RemoteException {
-		System.out.println(name + ": Handing over values to new predecessor.");
+	public synchronized Map<String, E> handover(String oldPredKey, String newPredKey) throws RemoteException {
+//		System.out.println(name + ": Handing over values to new predecessor.");
 		Map<String, E> handover = new LinkedHashMap<>();
 		List<String> keys = new ArrayList<String>(storage.keySet());
 		for(String k : keys)
 			if(Key.between(k, oldPredKey, newPredKey))
 				handover.put(k, storage.remove(k));
-		System.out.println(name + ": Handing over " + handover.size() + " keys/values.");
+//		System.out.println(name + ": Handing over " + handover.size() + " keys/values.");
 		return handover;
 	}
 	
@@ -161,22 +161,22 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 
 	@Override
-	public Node<E> getSuccessor() throws RemoteException {
+	public synchronized Node<E> getSuccessor() throws RemoteException {
 		return successor;
 	}
 
 	@Override
-	public Node<E> getPredecessor() throws RemoteException {
+	public synchronized Node<E> getPredecessor() throws RemoteException {
 		return predecessor;
 	}
 
 	@Override
-	public void setSuccessor(Node<E> succ) throws RemoteException {
+	public synchronized void setSuccessor(Node<E> succ) throws RemoteException {
 		successor = succ;
 	}
 
 	@Override
-	public void setPredecessor(Node<E> pred) throws RemoteException {
+	public synchronized void setPredecessor(Node<E> pred) throws RemoteException {
 		predecessor = pred;
 	}
 
@@ -191,7 +191,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 
 	@Override
-	public Node<E> lookup(String key) throws RemoteException {
+	public synchronized Node<E> lookup(String key) throws RemoteException {
 		String predKey = predecessor.getKey();
 		if(Key.between(key, predKey, getKey()))
 			return this;
@@ -216,18 +216,18 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	}
 	
 	@Override
-	public E getStored(String key) throws RemoteException {
+	public synchronized E getStored(String key) throws RemoteException {
 		return storage.get(key);
 	}
 	
 	@Override
-	public void addStored(String key, E value) throws RemoteException {
-		System.out.println(name + ": Adding <" + key +", " + value + "> to my storage.");
+	public synchronized void addStored(String key, E value) throws RemoteException {
+//		System.out.println(name + ": Adding <" + key +", " + value + "> to my storage.");
 		storage.put(key, value);
 	}
 	
 	@Override
-	public void removeStored(String key) throws RemoteException {
+	public synchronized void removeStored(String key) throws RemoteException {
 		storage.remove(key);
 	}
 
@@ -236,7 +236,7 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 		try {
 			String k = Key.generate(key, N);
 			Node<E> node = lookup(k);
-			System.out.println("get " + node.getStored(k) + " from " + node);
+//			System.out.println("get " + node.getStored(k) + " from " + node);
 			return node.getStored(k);
 		} catch (RemoteException e) {
 			e.printStackTrace();
