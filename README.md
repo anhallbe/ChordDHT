@@ -7,4 +7,4 @@ Java implementation of a Distributed Hash Table. This project is part of the cou
 To compile (JDK 7):
     javac -d bin -sourcepath src src/dht/*.java
     
-A more detailed description of the program, its' interfaces performance can be found in the javadoc or the written report.
+A more detailed description of the program, its' interfaces and performance evaluation can be found in the javadoc or the written report.
