@@ -24,14 +24,44 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 
 	private static final long serialVersionUID = 7837010474371220959L;
 	
+	/**
+	 * The name (human-readable) of this node.
+	 */
 	private String name;
+	
+	/**
+	 * A key that decides which values this node is responsible for.
+	 */
 	private String key;
+	
+	/**
+	 * The successor in the ring.
+	 */
 	private Node<E> successor;
+	
+	/**
+	 * The predecessor in the ring.
+	 */
 	private Node<E> predecessor;
+	
+	/**
+	 * The actual storage of values that this node is responsible for.
+	 */
 	private HashMap<String, E> storage = new HashMap<>();
+	
+	/**
+	 * The routing table.
+	 */
 	private Map<String, Node<E>> fingers = new LinkedHashMap<>();
 	
+	/**
+	 * The maximum number of keys (nodes/values) in the network.
+	 */
 	private static final int N = 1048576;
+	
+	/**
+	 * A Default port used for RMI-connection.
+	 */
 	public static final int DEFAULT_PORT = 1099;
 	
 	/**

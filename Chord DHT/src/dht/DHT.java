@@ -45,5 +45,8 @@ public interface DHT<V> {
 	 */
 	public List<String> listAll();
 	
+	/**
+	 * Can be used to force the node to update its' routing table.
+	 */
 	public void updateRouting();
 }

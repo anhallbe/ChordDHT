@@ -10,6 +10,12 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Key {
 	
+	/**
+	 * Generate a key based on the given name and key-space. Depending on the key-space, this key may or may not be unique.
+	 * @param name
+	 * @param space
+	 * @return
+	 */
 	public static String generate(String name, int space) {
 		String sha1 = sha1(name);
 		int characters = (int) (Math.log(space)/Math.log(2));
@@ -19,6 +25,13 @@ public class Key {
 //		return sha1.substring(0, characters);
 	}
 	
+	/**
+	 * Decide whether the key k is between f and t in the ring.
+	 * @param k - Key
+	 * @param f - From
+	 * @param t - To
+	 * @return true if k is in the interval (f, t]
+	 */
 	public static boolean between(String k, String f, String t) {
 		float key = Float.parseFloat(k);
 		float from = Float.parseFloat(f);
@@ -32,6 +45,11 @@ public class Key {
 			return true;		
 	}
 	
+	/**
+	 * Generate a SHA1-hash of the String s.
+	 * @param s
+	 * @return a String representing the SHA1-hash in base 2.
+	 */
 	private static String sha1(String s) {
 		String sha1 = null;
 		try {

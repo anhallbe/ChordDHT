@@ -8,10 +8,22 @@ import dht.DHT;
 import dht.Node;
 import dht.NodeImpl;
 
+/**
+ * This class presents a user interface that lets the user put/get/list/remove entries in a DHT.
+ * @author Andreas
+ *
+ */
 public class DistributedStorage {
 	
+	/**
+	 * Reference to a Distributed Hash Table.
+	 */
 	private DHT<String> dht;
 	
+	/**
+	 * Constructor used to create a local network of nodes.
+	 * @param name
+	 */
 	@SuppressWarnings("unchecked")
 	public DistributedStorage(String name) {
 		try {
@@ -27,6 +39,13 @@ public class DistributedStorage {
 		}
 	}
 	
+	/**
+	 * Constructor used to join an existing DHT.
+	 * @param name - The local name of this table/node.
+	 * @param rName - Remote name of another table (RMI registry name)
+	 * @param host - Remote host of the table.
+	 * @param port - Port used for RMI connection.
+	 */
 	public DistributedStorage(String name, String rName, String host, int port) {
 		try {
 			dht = new NodeImpl<>(name, host, port, rName);
@@ -40,6 +59,9 @@ public class DistributedStorage {
 		}
 	}
 	
+	/**
+	 * A simple console-based UI to perform some operations on the DHT.
+	 */
 	private void userInterface() {
 		Scanner scan = new Scanner(System.in);
 		String input = scan.nextLine();
@@ -91,6 +113,10 @@ public class DistributedStorage {
 		scan.close();
 	}
 	
+	/**
+	 * Create/join a DHT and let the user interact with it.
+	 * @param args - A single argument [name] will create a local dht. Arguments [localname, remotename, remotehost, remoteport] is used to connect to an existing dht.
+	 */
 	public static void main(String[] args) {
 		if(args.length == 1) {
 			String name = args[0];

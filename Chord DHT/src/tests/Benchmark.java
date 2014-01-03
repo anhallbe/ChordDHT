@@ -12,7 +12,17 @@ import dht.DHT;
 import dht.Node;
 import dht.NodeImpl;
 
+/**
+ * This class provides some static methods to perform performance tests.
+ * @author Andreas
+ *
+ */
 public class Benchmark {
+	
+	/**
+	 * Do some concurrency tests. Concurrently create n nodes, put n values in each node, and get n values from each node.
+	 * @param n
+	 */
 	@SuppressWarnings("unchecked")
 	public static void benchConcurrency(int n) {
 		try {
@@ -45,6 +55,13 @@ public class Benchmark {
 		}
 	}
 	
+	/**
+	 * Create n nodes that will be linked to the dht network.
+	 * @param n
+	 * @param dht
+	 * @return The list of nodes.
+	 * @throws RemoteException
+	 */
 	private static List<DHT<String>> createNodes(int n, final Node<String> dht) throws RemoteException {
 		final List<DHT<String>> nodes = new ArrayList<>();
 		for(int i=0; i<n; i++) {
@@ -53,6 +70,12 @@ public class Benchmark {
 		return nodes;
 	}
 	
+	/**
+	 * Concurrently put one value in each node.
+	 * @param dhts - A list of nodes/dhts to insert into.
+	 * @return a list of keys to the values inserted in the table.
+	 * @throws InterruptedException
+	 */
 	private static List<String> benchPut(List<DHT<String>> dhts) throws InterruptedException {
 		Random rand = new Random();
 		final List<String> keys = new ArrayList<>();
@@ -80,6 +103,11 @@ public class Benchmark {
 		return keys;
 	}
 	
+	/**
+	 * Concurrently get a random value from each node/dht.
+	 * @param dhts - A list of nodes/dhts in the network.
+	 * @param keys - A list of keys to randomly chose from.
+	 */
 	private static void benchGet(List<DHT<String>> dhts, List<String> keys) {
 		Random rand = new Random();
 		
@@ -100,6 +128,11 @@ public class Benchmark {
 		while(finnishedWork.get() != workStarted);
 	}
 
+	/**
+	 * Do some standard performance tests. Create nodes, insert and get n values.
+	 * @param nodes - Number of nodes in the network to evaluate.
+	 * @param n - Number of values to put/get.
+	 */
 	@SuppressWarnings("unchecked")
 	public static void bench(int nodes, int n) {
 		try {
