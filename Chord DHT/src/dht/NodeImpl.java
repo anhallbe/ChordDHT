@@ -102,15 +102,15 @@ public class NodeImpl<E> extends UnicastRemoteObject implements Node<E>, DHT<E> 
 	 * @param name
 	 * @param host
 	 * @param port
-	 * @param ohterName
+	 * @param otherName
 	 * @throws RemoteException
 	 * @throws NotBoundException 
 	 */
 	@SuppressWarnings("unchecked")
-	public NodeImpl(String name, String host, int port, String ohterName) throws RemoteException, NotBoundException {
+	public NodeImpl(String name, String host, int port, String otherName) throws RemoteException, NotBoundException {
 		this(name);
 		Registry registry = LocateRegistry.getRegistry(host, port);
-		Node<E> other = (Node<E>) registry.lookup(ohterName);
+		Node<E> other = (Node<E>) registry.lookup(otherName);
 		join(other);
 	}
 	
