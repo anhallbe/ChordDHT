@@ -1,9 +1,14 @@
-dht
+Chord DHT
 ===
 
 Java implementation of a Distributed Hash Table. This project is part of the course ID2212 Network Programming with Java at KTH.
 
+:warning: Note
+===
+This project was only meant for personal/educational use. It is not and will probably never be suitable for production use.
 
+Building
+===
 To compile (JDK 7):
     javac -d bin -sourcepath src src/dht/*.java
     javac -d bin -sourcepath src src/tests/*.java
